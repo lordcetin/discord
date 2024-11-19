@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
+import "./ui/globals.css";
+import { Toast } from "@/components/Toast";
+import { ThemeProvider } from "@/components/Theme";
+import { cn } from "@/lib/utils";
+import SessionWrapper from "@/components/SessionWrapper/SessionWrapper";
+import { QueryProvider } from "@/providers/QueryProvider";
+import { SocketProvider } from "@/components/providers/socketProvider";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+  const ggSans = localFont({
+    src:[
+      {path:"./fonts/ggsansRegular.ttf",weight:'200'},
+      {path:"./fonts/ggsansMedium.ttf",weight:'400'},
+      {path:"./fonts/ggsansSemibold.ttf",weight:'500'},
+      {path:"./fonts/ggsansSemibold.ttf",weight:'500'},
+      {path:"./fonts/ggsansBold.ttf",weight:'600 900'},
+    ],
+    variable:"--font-gg"
+  })
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,10 +30,40 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
-      </body>
-    </html>
+
+  <html lang="en" suppressHydrationWarning>
+    <body className={cn(
+      "font-sans antialiased min-h-screen h-screen overflow-hidden text-white",
+      ggSans?.variable 
+    )}>
+      <QueryProvider>
+        <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+        >
+          <SocketProvider>
+            <SessionWrapper>
+            <Toast>
+
+            <div className="flex">
+              
+              <div className="flex-col items-center w-full">
+                
+                <section className="">
+                  {children}
+                </section>
+
+              </div>
+            </div>
+
+            </Toast>
+            </SessionWrapper>
+          </SocketProvider>
+        </ThemeProvider>
+      </QueryProvider>
+    </body>
+  </html>
   );
 }
